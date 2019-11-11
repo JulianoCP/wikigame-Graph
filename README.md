@@ -4,7 +4,7 @@
 
 Cada arquivo .tsv contém uma certa quantidade de vértices e arestas de um grafo representado nele, por exemplo, o arquivo 1k.tsv contém 1000 arestas, 10k.tsv contém 10 mil e assim por diante.
 
-O arquivo adjacencia.tsv contém o conjunto completo de vértices e arestas, sendo 4604 vértices e 119882.
+O arquivo adjacencia.tsv contém o conjunto completo de vértices e arestas, sendo 4604 vértices e 119882 arestas.
 
 [Site original onde os dados foram retirados, aqui](http://snap.stanford.edu/data/wikispeedia.html)
 
