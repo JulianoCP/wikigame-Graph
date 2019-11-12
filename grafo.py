@@ -75,7 +75,7 @@ class Grafo:
         for i in self.arrst:
             print('de', i.origem.valor, 'para', i.destino.valor)
 
-    def buscalarg(self, start):
+    def buscalarg(self, start,end):
         s = start
         queue = list()
         pai = [None] * len(self.newvtx)
@@ -96,6 +96,8 @@ class Grafo:
         while len(queue):
             j = queue.pop()
             for i in j.adj:
+                if i == end:
+                    return distancia[start.numero]
                 if cor[i.numero] == "branco":
                     cor[i.numero] = "cinza"
                     distancia[i.numero] = distancia[j.numero] + 1
@@ -103,144 +105,10 @@ class Grafo:
                     queue.append(i)
                 cor[j.numero] = "preto"
 
-        print("as cores", cor)
+        # print("as cores", cor)
         print("as distancias", distancia)
-        print('os pais', pai)
-        print('fila atual', queue)
-
-    def Dfs_Visit(self, start, cor, predecessor, f, d, pilha):
-
-        self.tempo = self.tempo + 1
-        d[start.numero] = self.tempo
-        cor[start.numero] = "cinza"
-
-        print("[", start.valor, ' ', end="")
-
-        for i in start.adj:
-            if cor[i.numero] == "branco":
-                predecessor[i.numero] = start.valor
-                self.Dfs_Visit(i, cor, predecessor, f, d, pilha)
-        print(start.valor, "] ", end="")
-
-        cor[start.numero] = "preto"
-        self.tempo = self.tempo + 1
-        f[start.numero] = self.tempo
-        pilha.insert(0, start)
-
-    def Dfs(self):
-        f = [None] * len(self.newvtx)
-        d = [None] * len(self.newvtx)
-        cor = [None] * len(self.newvtx)
-        predecessor = [None] * len(self.newvtx)
-        pilha = list()
-        for i in self.newvtx:
-            cor[i.numero] = "branco"
-            predecessor[i.numero] = None
-
-        for i in self.newvtx:
-            if cor[i.numero] == "branco":
-                self.Dfs_Visit(i, cor, predecessor, f, d, pilha)
-
-        print()
-        print("momento descoberta", d)
-        print("momento finalizacao", f)
-        print("as cores", cor)
-        print("papai", predecessor)
-        self.tempo = 0
-        return pilha
-
-    def Dfs_Visit2(self, start, cor, predecessor, f, d, pilha, componente):
-
-        self.tempo = self.tempo + 1
-        d[start.numero] = self.tempo
-        cor[start.numero] = "cinza"
-        # print("[",start.valor,' ' , end="")
-
-        if start.valor not in componente:
-            componente.append(start.valor)
-
-        for i in start.incd:
-            if cor[i.numero] == "branco":
-                if i not in componente:
-                    componente.append(i.valor)
-                predecessor[i.numero] = start.valor
-                self.Dfs_Visit2(i, cor, predecessor, f, d, pilha, componente)
-        # print(start.valor,"] " , end="")
-
-        cor[start.numero] = "preto"
-        self.tempo = self.tempo + 1
-        f[start.numero] = self.tempo
-        pilha.append(start)
-        return componente.copy()
-
-    def Dfs2(self, sequencia):
-        f = [None] * len(self.newvtx)
-        d = [None] * len(self.newvtx)
-        cor = [None] * len(self.newvtx)
-        predecessor = [None] * len(self.newvtx)
-        pilha = list()
-        for i in self.newvtx:
-            cor[i.numero] = "branco"
-            predecessor[i.numero] = None
-
-        qntcomp = list()
-        componente = list()
-
-        for i in sequencia:
-            if cor[i.numero] == "branco":
-                qntcomp.append(self.Dfs_Visit2(
-                    i, cor, predecessor, f, d, pilha, componente))
-                componente.clear()
-
-        print('\nvolta na transposta')
-        print("momento descoberta", d)
-        print("momento finalizacao", f)
-        print("as cores", cor)
-        print("papai", predecessor)
-        print('componentes', qntcomp)
-
-    def kahn(self):
-        visitados = 0
-        Qentrada = list()
-        ordemSaida = list()
-        for i in self.newvtx:
-            if i.grau_entry == 0:
-                Qentrada.append(i)
-        while len(Qentrada):
-            vert = Qentrada.pop(0)
-            ordemSaida.append(vert.valor)
-            visitados += 1
-            for j in vert.adj:
-                j.grau_entry -= 1
-                if j.grau_entry == 0:
-                    Qentrada.append(j)
-        if visitados != len(self.newvtx):
-            print('nao eh possivel')
-        print('ordem', ordemSaida)
-
-    def printgrau(self):
-        for i in self.newvtx:
-            print(i.grau_entry)
-
-    def criaMatriz(self):
-        matr = [[0 for i in range(len(self.newvtx))]
-                for j in range(len(self.newvtx))]
-        for i in self.arrst:
-            matr[i.origem.numero][i.destino.numero] = 1
-
-        for i in matr:
-            for j in i:
-                print(j, end=" ")
-            print()
-        print('\ntransposta')
-        for i in range(len(matr)):
-            for j in range(len(matr)):
-                print(matr[j][i], end=" ")
-            print()
-
-    def kosajaru(self):
-        print('grafo normal')
-        self.Dfs2(self.Dfs())
+        # print('os pais', pai)
+        # print('fila atual', queue)
 
 
 if __name__ == "__main__":
@@ -266,33 +134,36 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    with open('30k.tsv', encoding='ascii') as arquivo:
+    with open('1k.tsv', encoding='ascii') as arquivo:
         leitor = csv.reader(arquivo)
         vertice = ""
+        contador =0
+        partida = None 
         for linha in leitor:
             if vertice != urllib.parse.unquote(linha[0].split()[0]):
                 partida = Vtx(urllib.parse.unquote(linha[0].split()[0]))
+                # print('partida',partida.valor)
                 grafo.addvtx(partida)
                 vertice = urllib.parse.unquote(linha[0].split()[0])
 
-            vChegada = urllib.parse.unquote(linha[0].split()[1])
-            for item in grafo.newvtx:
-                if vChegada == item.valor:
-                    chegada = item
-                    grafo.createAresta(partida, chegada)
-            try:
-                chegada
-            except NameError:
-                chegada = Vtx(vChegada)
+            chegada = Vtx(urllib.parse.unquote(linha[0].split()[1]))
+            # print(grafo.newvtx)
+            #print('criando rota',vertice,vChegada)
+            if chegada not in grafo.newvtx:
                 grafo.addvtx(chegada)
-                grafo.createAresta(partida, chegada)
+            else:
+                del chegada
+            
+            grafo.createAresta(partida,chegada)
 
-    print('\n', "{0:#^50}".format(' mostrando grafo '))
     grafo.printGrafo()
-    print('\n', "{0:#^50}".format(' lista adjacencia '))
     grafo.printAdj()
-
-    print("--- %s Segundos ---" % (time.time() - start_time))
+    print(grafo.buscalarg(grafo.newvtx[0],grafo.newvtx[1]))
+    #print('\n', "{0:#^50}".format(' mostrando grafo '))
+    #print('\n', "{0:#^50}".format(' lista adjacencia '))
+    #grafo.printAdj()
+    #print('tamanho->',len(grafo.newvtx))
+    #print("--- %s Segundos ---" % (time.time() - start_time))
 
     # Coisas antigas
     # print('\n', "{0:#^50}".format(' Busca Largura '))
