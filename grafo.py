@@ -7,7 +7,6 @@ import csv
 import urllib.parse
 import time
 
-global cont
 cont = 0
 
 
@@ -35,10 +34,14 @@ class Aresta:
 
 class Grafo:
     def __init__(self):
+        self.arrayNome = list()
         self.newvtx = list()
         self.arrst = list()
         self.tempo = 0
 
+    def add_in_nome(self,nome):
+        self.arrayNome.append(nome)
+    
     def printGrafo(self):
         for i in self.newvtx:
             print(i.valor)
@@ -47,14 +50,11 @@ class Grafo:
         self.newvtx.append(vtx)
 
     def createAresta(self, vtx1, vtx2):
-        '''comentarios para transformar em orientado'''
         self.arrst.append(Aresta(vtx1, vtx2))
         vtx1.adj.append(vtx2)
         vtx2.incd.append(vtx1)
         vtx2.grau_entry += 1
-        # self.arrst.append(Aresta(vtx2,vtx1))
-        # vtx2.adj.append(vtx1)
-        # vtx1.incd.append(vtx2)
+      
 
     def printAdj(self):
         for i in self.newvtx:
@@ -96,8 +96,6 @@ class Grafo:
         while len(queue):
             j = queue.pop()
             for i in j.adj:
-                if i == end:
-                    return distancia[start.numero]
                 if cor[i.numero] == "branco":
                     cor[i.numero] = "cinza"
                     distancia[i.numero] = distancia[j.numero] + 1
@@ -105,11 +103,17 @@ class Grafo:
                     queue.append(i)
                 cor[j.numero] = "preto"
 
-        # print("as cores", cor)
-        print("as distancias", distancia)
-        # print('os pais', pai)
-        # print('fila atual', queue)
+        return distancia[end.numero]
 
+
+def calculaDistancia(origem,destino,grafo):
+    n1,n2 = None,None
+    for i,j in zip(grafo.arrayNome, grafo.newvtx):
+        if i == origem:
+            n1 = j
+        if i == destino:
+            n2 = j
+    print('a busca entre {} e {} tem distancia {}'.format(origem,destino,grafo.buscalarg(n1,n2)))
 
 if __name__ == "__main__":
     grafo = Grafo()
@@ -137,48 +141,32 @@ if __name__ == "__main__":
         leitor = csv.reader(arquivo)
         vertice = ""
         contador =0
-        partida = None 
+        partida = None
+        chegada = None 
         for linha in leitor:
-            if vertice != urllib.parse.unquote(linha[0].split()[0]):
-                partida = Vtx(urllib.parse.unquote(linha[0].split()[0]))
-                vertice = urllib.parse.unquote(linha[0].split()[0])
-                for valor in grafo.newvtx:
-                    if valor.valor == partida.valor:
-                        partida = valor
-                        break;
-                if partida not in grafo.newvtx:
-                    grafo.addvtx(partida)
-                    
-
-            chegada = Vtx(urllib.parse.unquote(linha[0].split()[1]))
-            if chegada not in grafo.newvtx:
-                grafo.addvtx(chegada)
+            v1 = urllib.parse.unquote(linha[0].split()[0])
+            if v1 not in grafo.arrayNome:
+                partida = Vtx(v1)
+                grafo.add_in_nome(v1)
+                grafo.addvtx(partida)
             else:
-                del chegada
-            
-            grafo.createAresta(partida,chegada)
+                for i,j in zip(grafo.arrayNome, grafo.newvtx):
+                    if i == v1:
+                        partida = j
+
+            v2 = urllib.parse.unquote(linha[0].split()[1])
+            if v2 not in grafo.arrayNome:
+                chegada = Vtx(v2)
+                grafo.addvtx(chegada)
+                grafo.add_in_nome(v2)
+            else:
+                for i,j in zip(grafo.arrayNome, grafo.newvtx):
+                    if i == v2:
+                        chegada = j
+          
+            if type(chegada) is Vtx and type(partida) is Vtx:
+                grafo.createAresta(partida,chegada)
 
     grafo.printGrafo()
     grafo.printAdj()
-    # print(grafo.buscalarg(grafo.newvtx[0],grafo.newvtx[0]))
-    #print('\n', "{0:#^50}".format(' mostrando grafo '))
-    #print('\n', "{0:#^50}".format(' lista adjacencia '))
-    #grafo.printAdj()
-    #print('tamanho->',len(grafo.newvtx))
-    #print("--- %s Segundos ---" % (time.time() - start_time))
-
-    # Coisas antigas
-    # print('\n', "{0:#^50}".format(' Busca Largura '))
-    # x.buscalarg(a)
-    # print('\n', "{0:#^50}".format(' DFS '))
-    # x.Dfs()
-    # print('\n', "{0:#^50}".format(' lista incidencia '))
-    # x.printIncd()
-    # print('\n', "{0:#^50}".format(' arestas '))
-    # x.printAresta()
-    # print('\n', "{0:#^50}".format(' kahn '))
-    # x.kahn()
-    # print('\n', "{0:#^50}".format(' matriz adjacencia '))
-    # x.criaMatriz()
-    # print('\n', "{0:#^50}".format(' Kosajaru '))
-    # x.kosajaru()
+    calculaDistancia('Áedán_mac_Gabráin','kkk',grafo)
