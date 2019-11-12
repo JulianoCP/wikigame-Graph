@@ -122,8 +122,7 @@ if __name__ == "__main__":
     #
     #
     # PROBLEMAS:
-    # Poderia ser um pouco mais rápido, porém ~34 segundos para...
-    # ...4,604 vértices e 119,882 arestas parece razoável
+    # Poderia ser um pouco mais rápido, porém tá daora por enquanto
     #
     #
     # Solução:
@@ -142,13 +141,16 @@ if __name__ == "__main__":
         for linha in leitor:
             if vertice != urllib.parse.unquote(linha[0].split()[0]):
                 partida = Vtx(urllib.parse.unquote(linha[0].split()[0]))
-                # print('partida',partida.valor)
-                grafo.addvtx(partida)
                 vertice = urllib.parse.unquote(linha[0].split()[0])
+                for valor in grafo.newvtx:
+                    if valor.valor == partida.valor:
+                        partida = valor
+                        break;
+                if partida not in grafo.newvtx:
+                    grafo.addvtx(partida)
+                    
 
             chegada = Vtx(urllib.parse.unquote(linha[0].split()[1]))
-            # print(grafo.newvtx)
-            #print('criando rota',vertice,vChegada)
             if chegada not in grafo.newvtx:
                 grafo.addvtx(chegada)
             else:
@@ -158,7 +160,7 @@ if __name__ == "__main__":
 
     grafo.printGrafo()
     grafo.printAdj()
-    print(grafo.buscalarg(grafo.newvtx[0],grafo.newvtx[1]))
+    # print(grafo.buscalarg(grafo.newvtx[0],grafo.newvtx[0]))
     #print('\n', "{0:#^50}".format(' mostrando grafo '))
     #print('\n', "{0:#^50}".format(' lista adjacencia '))
     #grafo.printAdj()
