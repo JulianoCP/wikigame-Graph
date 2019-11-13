@@ -1,0 +1,4 @@
+Saindo de [Áedán_mac_Gabráin]-> [Bede] [Columba] [Dál_Riata] [Great_Britain] [Ireland] [Isle_of_Man] [Monarchy] [Orkney] [Picts] [Scotland] [Wales]
+Saindo de [Bede]-> [abc]
+Saindo de [Åland]-> [20th_century] [Baltic_Sea] [Crimean_War]
+Saindo de [abc]-> [kkk] [cde]

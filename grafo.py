@@ -106,14 +106,30 @@ class Grafo:
         return distancia[end.numero]
 
 
-def calculaDistancia(origem,destino,grafo):
-    n1,n2 = None,None
-    for i,j in zip(grafo.arrayNome, grafo.newvtx):
-        if i == origem:
-            n1 = j
-        if i == destino:
-            n2 = j
-    print('a busca entre {} e {} tem distancia {}'.format(origem,destino,grafo.buscalarg(n1,n2)))
+    def calculaDistancia(self,origem,destino):
+        n1,n2 = None,None
+        for i,j in zip(self.arrayNome, self.newvtx):
+            if i == origem:
+                n1 = j
+            if i == destino:
+                n2 = j
+        print('a busca entre {} e {} tem distancia {}'.format(origem,destino,self.buscalarg(n1,n2)))
+        
+    def wikiVertices(self):
+        arq = open('VerticeNome.txt','w')
+        for i in self.arrayNome:
+            arq.write(i+'\n')
+        arq.close()
+        
+    def wikiAdj(self):
+        arq = open('VerticeAdjacencia.txt','w')
+        for i in self.newvtx:
+            if len(i.adj) > 0:
+                arq.write("Saindo de [%s]->" % i.valor)
+                for j in i.adj:
+                    arq.write(" [%s]" % j.valor)
+                arq.write('\n')
+        arq.close()
 
 if __name__ == "__main__":
     grafo = Grafo()
@@ -167,6 +183,9 @@ if __name__ == "__main__":
             if type(chegada) is Vtx and type(partida) is Vtx:
                 grafo.createAresta(partida,chegada)
 
-    grafo.printGrafo()
-    grafo.printAdj()
-    calculaDistancia('Áedán_mac_Gabráin','kkk',grafo)
+    # grafo.printGrafo()
+    # grafo.printAdj()
+    grafo.wikiAdj()
+    grafo.wikiVertices()
+    print('Os nomes do vertices existentes estao disponiveis em {} e as arestas existentes estao em {} \n'.format('VerticeNome.txt','VerticeAdjacencia.txt'))
+    grafo.calculaDistancia('Áedán_mac_Gabráin','kkk')
