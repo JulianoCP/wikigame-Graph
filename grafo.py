@@ -113,7 +113,7 @@ class Grafo:
                 n1 = j
             if i == destino:
                 n2 = j
-        print('a busca entre {} e {} tem distancia {}'.format(origem,destino,self.buscalarg(n1,n2)))
+        print('a busca entre {} e {} tem distancia {}\n'.format(origem,destino,self.buscalarg(n1,n2)))
         
     def wikiVertices(self):
         arq = open('VerticeNome.txt','w')
@@ -151,9 +151,10 @@ if __name__ == "__main__":
     # Rezar?
     #
 
-    start_time = time.time()
+    print('Aguarde, estamos calculando os vertices e arestas\n')
+    # start_time = time.time()
 
-    with open('1k.tsv', encoding='ascii') as arquivo:
+    with open('50k.tsv', encoding='ascii') as arquivo:
         leitor = csv.reader(arquivo)
         vertice = ""
         contador =0
@@ -166,9 +167,11 @@ if __name__ == "__main__":
                 grafo.add_in_nome(v1)
                 grafo.addvtx(partida)
             else:
-                for i,j in zip(grafo.arrayNome, grafo.newvtx):
-                    if i == v1:
-                        partida = j
+                # indice  = grafo.arrayNome.index(v1)
+                partida = grafo.newvtx[grafo.arrayNome.index(v1)]
+                # for i,j in zip(grafo.arrayNome, grafo.newvtx):
+                    # if i == v1:
+                        # partida = j
 
             v2 = urllib.parse.unquote(linha[0].split()[1])
             if v2 not in grafo.arrayNome:
@@ -176,16 +179,33 @@ if __name__ == "__main__":
                 grafo.addvtx(chegada)
                 grafo.add_in_nome(v2)
             else:
-                for i,j in zip(grafo.arrayNome, grafo.newvtx):
-                    if i == v2:
-                        chegada = j
+                # indice  = grafo.arrayNome.index(v2)
+                chegada = grafo.newvtx[grafo.arrayNome.index(v2)]
+                # for i,j in zip(grafo.arrayNome, grafo.newvtx):
+                #     if i == v2:
+                        # chegada = j
           
             if type(chegada) is Vtx and type(partida) is Vtx:
                 grafo.createAresta(partida,chegada)
 
+    # final = time.time()
+    # print('delay {} segundos'.format(final - start_time))
+    
+    
     # grafo.printGrafo()
     # grafo.printAdj()
     grafo.wikiAdj()
     grafo.wikiVertices()
     print('Os nomes do vertices existentes estao disponiveis em {} e as arestas existentes estao em {} \n'.format('VerticeNome.txt','VerticeAdjacencia.txt'))
-    grafo.calculaDistancia('Áedán_mac_Gabráin','kkk')
+    option = 1
+    while(option):
+        print('Digite 1 para inserir valores ou digite 0 para sair')
+        option = int(input())
+        if option:
+            print('digite a origem:')
+            origem = input()
+            print('digite o destino:')
+            destino = input()
+            grafo.calculaDistancia(origem,destino)
+        
+    # 'Åland','Viking'
