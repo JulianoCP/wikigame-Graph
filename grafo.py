@@ -118,10 +118,10 @@ class Grafo:
                 print('\nA busca entre {} e {} tem distancia {}'.format(
                     origem, destino, self.buscalarg(n1, n2)))
             else:
-                print('\nO vertice {} nao alcanca o vertica {}'.format(
+                print('\nO vertice {} não alcança o vertice {}'.format(
                     origem, destino))
         else:
-            print('Erro: vertices invalidos')
+            print('Erro: Vertices invalidos')
 
     def wikiVertices(self):
         arq = open('VerticeNome.txt', 'w')
@@ -138,80 +138,77 @@ class Grafo:
                     arq.write(" [%s]" % j.valor)
                 arq.write('\n')
         arq.close()
-
+    def populate(self,arquivo):
+        print('\nAguarde, estamos computando os vertices e arestas')
+        start_time = time.time()
+        with open(arquivo+'.tsv', encoding='ascii') as arquivo:
+            leitor = csv.reader(arquivo)
+            partida = None
+            chegada = None
+            for linha in leitor:
+                v1 = urllib.parse.unquote(linha[0].split()[0])
+                if v1 not in self.arrayNome:
+                    partida = Vtx(v1)
+                    self.add_in_nome(v1)
+                    self.addvtx(partida)
+                else:
+                    partida = self.newvtx[self.arrayNome.index(v1)]
+    
+                v2 = urllib.parse.unquote(linha[0].split()[1])
+                if v2 not in self.arrayNome:
+                    chegada = Vtx(v2)
+                    self.addvtx(chegada)
+                    self.add_in_nome(v2)
+                else:
+                    chegada = self.newvtx[self.arrayNome.index(v2)]
+    
+                if type(chegada) is Vtx and type(partida) is Vtx:
+                    self.createAresta(partida, chegada)
+                    
+        print("--- {} Segundos para carregar o grafo ---".format(time.time() - start_time))
 
 dictTsv = {
-    0: '1k',
-    1: '10k',
-    2: '20k',
-    3: '30k',
-    4: '40k',
-    5: '50k',
-    6: '120k'
+    0: ['1k','1k'],
+    1: ['10k','10k'],
+    2: ['20k','20k'],
+    3: ['30k','30k'],
+    4: ['40k','40k'],
+    5: ['50k','50k'],
+    6: ['120k','adjacencia']
 }
 
 if __name__ == "__main__":
     grafo = Grafo()
 
-    print('Selecione um dos arquivos para ser usado como grafo')
+    print('Selecione um dos arquivos para ser usado como grafo:\n')
     for i in range(0, len(dictTsv)):
-        print('Opcao ', i, ' : ', dictTsv[i], 'de linhas')
-    print('\nOpcao desejada: ', end='')
-    arquivo = int(input())
-    selecionado = dictTsv[arquivo]
+        print('Opção {}: {} linhas de ligações'.format(i,dictTsv[i][0]))
+    print('\nOpção desejada: ', end='')
+    selecionado = int(input())
+    arquivo = dictTsv[selecionado][1]
 
-    print('\nAguarde, estamos calculando os vertices e arestas')
-    start_time = time.time()
-    with open(selecionado+'.tsv', encoding='ascii') as arquivo:
-        leitor = csv.reader(arquivo)
-        vertice = ""
-        contador = 0
-        partida = None
-        chegada = None
-        for linha in leitor:
-            v1 = urllib.parse.unquote(linha[0].split()[0])
-            if v1 not in grafo.arrayNome:
-                partida = Vtx(v1)
-                grafo.add_in_nome(v1)
-                grafo.addvtx(partida)
-            else:
-                partida = grafo.newvtx[grafo.arrayNome.index(v1)]
-
-            v2 = urllib.parse.unquote(linha[0].split()[1])
-            if v2 not in grafo.arrayNome:
-                chegada = Vtx(v2)
-                grafo.addvtx(chegada)
-                grafo.add_in_nome(v2)
-            else:
-                chegada = grafo.newvtx[grafo.arrayNome.index(v2)]
-
-            if type(chegada) is Vtx and type(partida) is Vtx:
-                grafo.createAresta(partida, chegada)
-    print("--- %s Segundos para carregar o grafo ---" %
-          (time.time() - start_time))
+    grafo.populate(arquivo)
 
     grafo.wikiAdj()
     grafo.wikiVertices()
-    print('\nOs nomes do vertices existentes estao disponiveis em {} e as arestas existentes estao em {}'.format(
-        'VerticeNome.txt', 'VerticeAdjacencia.txt'))
+    print('\nOs nomes do vertices existentes estão disponiveis em {} e as arestas existentes estão em {}'.format('VerticeNome.txt', 'VerticeAdjacencia.txt'))
+    
     option = 1
 
     while(option != 0):
-        print('\nDigite 2 para vértices aleatórios, 1 para inserir valores ou 0 para sair: ', end='')
+        print('\nDigite 2 para vértices aleatórios, 1 para inserir nomes de vertices ou 0 para sair: ', end='')
         option = int(input())
         if option == 1:
-            print('\nDigite a origem: ', end='')
+            print('\nDigite o vertice de origem: ', end='')
             origem = input()
-            print('Digite o destino: ', end='')
+            print('Digite o vertice de destino: ', end='')
             destino = input()
             start_time = time.time()
             grafo.calculaDistancia(origem, destino)
-            print("--- %s Segundos para executar a busca ---" %
-                  (time.time() - start_time))
+            print("--- {} Segundos para executar a busca ---".format(time.time() - start_time))
         elif option == 2:
             origem = random.choice(grafo.newvtx)
             destino = random.choice(grafo.newvtx)
             start_time = time.time()
             grafo.calculaDistancia(origem.valor, destino.valor)
-            print("--- %s Segundos para executar a busca ---" %
-                  (time.time() - start_time))
+            print("--- {} Segundos para executar a busca ---".format(time.time() - start_time))
