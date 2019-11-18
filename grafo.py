@@ -40,7 +40,7 @@ class Grafo:
         self.arrst = list()
         self.tempo = 0
 
-    def add_in_nome(self, nome):
+    def add_in_name(self, nome):
         self.arrayNome.append(nome)
 
     def printGrafo(self):
@@ -106,20 +106,22 @@ class Grafo:
         return distancia[end.numero]
 
     def calculaDistancia(self, origem, destino):
-        n1, n2 = None, None
+        v1, v2 = None, None
         for i, j in zip(self.arrayNome, self.newvtx):
             if i == origem:
-                n1 = j
+                v1 = j
             elif i == destino:
-                n2 = j
-        if n1 != None and n2 != None:
-            distancia = self.buscalarg(n1, n2)
+                v2 = j
+        if v1 != None and v2 != None:
+            start_time = time.time()
+            distancia = self.buscalarg(v1, v2)
             if distancia != None:
                 print('\nA busca entre {} e {} tem distancia {}'.format(
-                    origem, destino, self.buscalarg(n1, n2)))
+                    origem, destino, self.buscalarg(v1, v2)))
             else:
                 print('\nO vertice {} não alcança o vertice {}'.format(
                     origem, destino))
+            print("--- {} Segundos para executar a busca ---".format(time.time() - start_time))
         else:
             print('Erro: Vertices invalidos')
 
@@ -138,6 +140,7 @@ class Grafo:
                     arq.write(" [%s]" % j.valor)
                 arq.write('\n')
         arq.close()
+    
     def populate(self,arquivo):
         print('\nAguarde, estamos computando os vertices e arestas')
         start_time = time.time()
@@ -149,7 +152,7 @@ class Grafo:
                 v1 = urllib.parse.unquote(linha[0].split()[0])
                 if v1 not in self.arrayNome:
                     partida = Vtx(v1)
-                    self.add_in_nome(v1)
+                    self.add_in_name(v1)
                     self.addvtx(partida)
                 else:
                     partida = self.newvtx[self.arrayNome.index(v1)]
@@ -158,7 +161,7 @@ class Grafo:
                 if v2 not in self.arrayNome:
                     chegada = Vtx(v2)
                     self.addvtx(chegada)
-                    self.add_in_nome(v2)
+                    self.add_in_name(v2)
                 else:
                     chegada = self.newvtx[self.arrayNome.index(v2)]
     
@@ -177,18 +180,20 @@ dictTsv = {
     6: ['120k','adjacencia']
 }
 
-if __name__ == "__main__":
-    grafo = Grafo()
-
+def selectFile():
     print('Selecione um dos arquivos para ser usado como grafo:\n')
     for i in range(0, len(dictTsv)):
         print('Opção {}: {} linhas de ligações'.format(i,dictTsv[i][0]))
     print('\nOpção desejada: ', end='')
     selecionado = int(input())
-    arquivo = dictTsv[selecionado][1]
+    return dictTsv[selecionado][1]
+    
 
+if __name__ == "__main__":
+    arquivo = selectFile()    
+
+    grafo = Grafo()
     grafo.populate(arquivo)
-
     grafo.wikiAdj()
     grafo.wikiVertices()
     print('\nOs nomes do vertices existentes estão disponiveis em {} e as arestas existentes estão em {}'.format('VerticeNome.txt', 'VerticeAdjacencia.txt'))
@@ -203,12 +208,8 @@ if __name__ == "__main__":
             origem = input()
             print('Digite o vertice de destino: ', end='')
             destino = input()
-            start_time = time.time()
             grafo.calculaDistancia(origem, destino)
-            print("--- {} Segundos para executar a busca ---".format(time.time() - start_time))
         elif option == 2:
             origem = random.choice(grafo.newvtx)
             destino = random.choice(grafo.newvtx)
-            start_time = time.time()
             grafo.calculaDistancia(origem.valor, destino.valor)
-            print("--- {} Segundos para executar a busca ---".format(time.time() - start_time))
