@@ -111,10 +111,17 @@ class Grafo:
         for i,j in zip(self.arrayNome, self.newvtx):
             if i == origem:
                 n1 = j
-            if i == destino:
+            elif i == destino:
                 n2 = j
-        print('a busca entre {} e {} tem distancia {}\n'.format(origem,destino,self.buscalarg(n1,n2)))
-        
+        if n1 != None and n2 != None:
+            distancia = self.buscalarg(n1,n2)
+            if distancia !=  None:
+                print('\nA busca entre {} e {} tem distancia {}'.format(origem,destino,self.buscalarg(n1,n2)))
+            else:
+                print('\nO vertice {} nao alcanca o vertica {}'.format(origem,destino))
+        else:
+            print('Erro: vertices invalidos') 
+               
     def wikiVertices(self):
         arq = open('VerticeNome.txt','w')
         for i in self.arrayNome:
@@ -131,30 +138,29 @@ class Grafo:
                 arq.write('\n')
         arq.close()
 
+dictTsv = {
+0 : '1k',
+1 : '10k',
+2 : '20k',
+3 : '30k',
+4 : '40k',
+5 : '50k',
+6 : '120k'
+}
+
 if __name__ == "__main__":
     grafo = Grafo()
 
-    # Plano de acão:
-    # Ler diretamente de adjacencia já que tem o ponto de partida e o de chegada
-    # Guarda o nome do vertice, caso for diferente do anterior (começa em nulo)...
-    # ...cria um vértice novo, e então checa se o ponto de chegada já existe...
-    # ...se não existe, é criado um novo ponto de chegada e colocado na lista
-    #
-    #
-    # PROBLEMAS:
-    # Poderia ser um pouco mais rápido, porém tá daora por enquanto
-    #
-    #
-    # Solução:
-    # Threads
-    # Computador mais rápido
-    # Rezar?
-    #
+    print('Selecione um dos arquivos para ser usado como grafo')
+    for i in range(0,len(dictTsv)):
+        print('Opcao ',i,' : ',dictTsv[i],'de linhas')
+    print('\nOpcao desejada: ',end='')
+    arquivo = int(input())
+    selecionado = dictTsv[arquivo]
+    
+    print('\nAguarde, estamos calculando os vertices e arestas')
 
-    print('Aguarde, estamos calculando os vertices e arestas\n')
-    # start_time = time.time()
-
-    with open('50k.tsv', encoding='ascii') as arquivo:
+    with open(selecionado+'.tsv', encoding='ascii') as arquivo:
         leitor = csv.reader(arquivo)
         vertice = ""
         contador =0
@@ -167,11 +173,7 @@ if __name__ == "__main__":
                 grafo.add_in_nome(v1)
                 grafo.addvtx(partida)
             else:
-                # indice  = grafo.arrayNome.index(v1)
                 partida = grafo.newvtx[grafo.arrayNome.index(v1)]
-                # for i,j in zip(grafo.arrayNome, grafo.newvtx):
-                    # if i == v1:
-                        # partida = j
 
             v2 = urllib.parse.unquote(linha[0].split()[1])
             if v2 not in grafo.arrayNome:
@@ -179,33 +181,23 @@ if __name__ == "__main__":
                 grafo.addvtx(chegada)
                 grafo.add_in_nome(v2)
             else:
-                # indice  = grafo.arrayNome.index(v2)
                 chegada = grafo.newvtx[grafo.arrayNome.index(v2)]
-                # for i,j in zip(grafo.arrayNome, grafo.newvtx):
-                #     if i == v2:
-                        # chegada = j
           
             if type(chegada) is Vtx and type(partida) is Vtx:
                 grafo.createAresta(partida,chegada)
 
-    # final = time.time()
-    # print('delay {} segundos'.format(final - start_time))
     
-    
-    # grafo.printGrafo()
-    # grafo.printAdj()
     grafo.wikiAdj()
     grafo.wikiVertices()
-    print('Os nomes do vertices existentes estao disponiveis em {} e as arestas existentes estao em {} \n'.format('VerticeNome.txt','VerticeAdjacencia.txt'))
+    print('\nOs nomes do vertices existentes estao disponiveis em {} e as arestas existentes estao em {}'.format('VerticeNome.txt','VerticeAdjacencia.txt'))
     option = 1
     while(option):
-        print('Digite 1 para inserir valores ou digite 0 para sair')
+        print('\nDigite 1 para inserir valores ou digite 0 para sair: ',end='')
         option = int(input())
         if option:
-            print('digite a origem:')
+            print('\nDigite a origem: ', end='')
             origem = input()
-            print('digite o destino:')
+            print('Digite o destino: ',end='')
             destino = input()
             grafo.calculaDistancia(origem,destino)
         
-    # 'Åland','Viking'
